@@ -218,10 +218,10 @@ gui:
         description: "&7Clique para voltar ao menu principal"
       filter:
         all:
-          title: "&eMostrar Todos os Leilões"
+          title: "&eTodos os leilões"
           description: "&7Clique para ver apenas seus leilões"
         personal:
-          title: "&eMeus Leilões"
+          title: "&eMeus leilões"
           description: "&7Clique para ver todos os leilões"
 
   queue:
