@@ -1,6 +1,7 @@
 <div align="center">
     <img src="./gauction.gif" alt="gAuction" width="300" height="300" style="margin-right: 40px;">
     <br clear="left"/>
+    <br clear="left"/>
     <div style="text-align: left; max-width: 600px;">
         <p>
             A robust and intuitive auction system for Minecraft servers, offering a complete trading experience through a modern and user-friendly graphical interface.
