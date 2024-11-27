@@ -751,4 +751,62 @@ public final class AuctionManager {
             auctionQueue.remove(auction);
         }
     }
+
+    public void cancelCurrentAuction() {
+        try {
+            auctionLock.lock();
+            if (currentAuction != null) {
+                saveToWarehouse(currentAuction, AuctionStatus.CANCELLED);
+                
+                if (currentAuction.getCurrentBidderUUID() != null) {
+                    Player currentBidder = Bukkit.getPlayer(currentAuction.getCurrentBidderUUID());
+                    if (currentBidder != null) {
+                        economyManager.depositPlayer(currentBidder, currentAuction.getCurrentBid());
+                        
+                        Map<String, String> placeholders = new HashMap<>();
+                        placeholders.put("bid", String.valueOf(currentAuction.getCurrentBid()));
+                        messageManager.sendMessage(currentBidder, "messages.player.bids.refunded", placeholders);
+                    }
+                }
+
+                currentAuction = null;
+                cancelAllTimers();
+                scheduleNextAuction();
+                refreshAllGUIs();
+            }
+        } finally {
+            auctionLock.unlock();
+        }
+    }
+
+    public void cancelQueuedAuction(AuctionItem auction) {
+        try {
+            auctionLock.lock();
+            if (auctionQueue.remove(auction)) {
+                saveToWarehouse(auction, AuctionStatus.CANCELLED);
+                refreshAllGUIs();
+            }
+        } finally {
+            auctionLock.unlock();
+        }
+    }
+
+    public void clearAllAuctions() {
+        try {
+            auctionLock.lock();
+            
+            if (currentAuction != null) {
+                cancelCurrentAuction();
+            }
+
+            while (!auctionQueue.isEmpty()) {
+                AuctionItem auction = auctionQueue.poll();
+                saveToWarehouse(auction, AuctionStatus.CANCELLED);
+            }
+
+            refreshAllGUIs();
+        } finally {
+            auctionLock.unlock();
+        }
+    }
 }

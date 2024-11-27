@@ -234,3 +234,9 @@ gui:
       back:
         title: "&cVoltar ao Menu Principal"
         description: "&7Clique para voltar ao menu principal"
+      clear:
+        title: "&cLimpar Fila"
+        description: "&7Clique para cancelar todos os leilões"
+      current_cancelled: "{prefix}&cLeilão atual cancelado"
+      removed: "{prefix}&cLeilão removido da fila"
+      queue_cleared: "{prefix}&cTodos os leilões foram cancelados"

@@ -23,6 +23,7 @@ public final class AuctionQueueGUI implements InventoryHolder {
     private final MessageManager messageManager;
     private Inventory inventory;
     private static final int ROWS = 3;
+    private static final int CLEAR_QUEUE_BUTTON_SLOT = 4;
     private static final int BACK_BUTTON_SLOT = 22;
 
     public AuctionQueueGUI(GAuctionPlugin plugin, Player player) {
@@ -53,6 +54,10 @@ public final class AuctionQueueGUI implements InventoryHolder {
         }
 
         inventory.setItem(BACK_BUTTON_SLOT, createBackButton());
+        
+        if (player.hasPermission("gauction.admin")) {
+            inventory.setItem(CLEAR_QUEUE_BUTTON_SLOT, createClearQueueButton());
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -99,24 +104,68 @@ public final class AuctionQueueGUI implements InventoryHolder {
         return button;
     }
 
-    public void handleInventoryClick(Player player, int slot, boolean isRightClick) {
-        if (slot >= 0 && slot < inventory.getSize()) {
-            if (slot == BACK_BUTTON_SLOT) {
-                player.closeInventory();
-                new AuctionMainGUI(plugin, player).open();
-                return;
-            }
+    @SuppressWarnings("deprecation")
+    private ItemStack createClearQueueButton() {
+        ItemStack button = new ItemStack(Material.BARRIER);
+        ItemMeta meta = button.getItemMeta();
+        if (meta != null) {
+            Map<String, String> placeholders = new HashMap<>();
+            meta.setDisplayName(messageManager.getPlainMessage("gui.queue.buttons.clear.title", placeholders));
+            
+            List<String> lore = new ArrayList<>();
+            lore.add(messageManager.getPlainMessage("gui.queue.buttons.clear.description", placeholders));
+            meta.setLore(lore);
+            
+            button.setItemMeta(meta);
+        }
+        return button;
+    }
 
-            if (player.hasPermission("gauction.admin") && isRightClick) {
-                AuctionItem clickedAuction = plugin.getAuctionManager().getQueueItemAt(slot - 10);
+    public void handleInventoryClick(Player player, int slot, boolean isRightClick) {
+        if (slot < 0 || slot >= inventory.getSize()) {
+            return;
+        }
+
+        if (slot == BACK_BUTTON_SLOT) {
+            player.closeInventory();
+            new AuctionMainGUI(plugin, player).open();
+            return;
+        }
+
+        if (slot == CLEAR_QUEUE_BUTTON_SLOT && player.hasPermission("gauction.admin")) {
+            clearQueue();
+            return;
+        }
+
+        if (isValidQueueSlot(slot) && player.hasPermission("gauction.admin") && isRightClick) {
+            int index = getQueueIndex(slot);
+            if (index == 0) {
+                plugin.getAuctionManager().cancelCurrentAuction();
+                Map<String, String> placeholders = new HashMap<>();
+                messageManager.sendMessage(player, "gui.queue.messages.current_cancelled", placeholders);
+            } else {
+                AuctionItem clickedAuction = plugin.getAuctionManager().getQueueItemAt(index);
                 if (clickedAuction != null) {
-                    plugin.getAuctionManager().removeFromQueue(clickedAuction);
+                    plugin.getAuctionManager().cancelQueuedAuction(clickedAuction);
                     Map<String, String> placeholders = new HashMap<>();
                     messageManager.sendMessage(player, "gui.queue.messages.removed", placeholders);
-                    refresh();
                 }
             }
+            refresh();
         }
+    }
+
+    private boolean isValidQueueSlot(int slot) {
+        int row = slot / 9;
+        int col = slot % 9;
+        
+        return row >= 1 && row <= 3 && col >= 1 && col <= 9;
+    }
+
+    private int getQueueIndex(int slot) {
+        int row = slot / 9 - 1;
+        int col = slot % 9 - 1;
+        return row * 7 + col;
     }
 
     public void refresh() {
@@ -147,5 +196,12 @@ public final class AuctionQueueGUI implements InventoryHolder {
 
     public void open() {
         player.openInventory(inventory);
+    }
+
+    private void clearQueue() {
+        plugin.getAuctionManager().clearAllAuctions();
+        Map<String, String> placeholders = new HashMap<>();
+        messageManager.sendMessage(player, "gui.queue.messages.queue_cleared", placeholders);
+        refresh();
     }
 } 
