@@ -1,16 +1,15 @@
-<div align="center" style="display: flex; align-items: center; margin-bottom: 20px;">
-  <img src="./gauction.gif" alt="gAuction" width="300" height="300" style="margin-right: 40px;">
-  <div style="text-align: left; max-width: 600px;">
+<img src="./gauction.gif" alt="gAuction" width="300" height="300" style="margin-right: 40px;">
+<br clear="left"/>
+<div style="text-align: left; max-width: 600px;">
     <p>
-      Um sistema de leilões robusto e intuitivo para servidores Minecraft, oferecendo uma experiência completa de comércio através de uma interface gráfica moderna e amigável.
+        Um sistema de leilões robusto e intuitivo para servidores Minecraft, oferecendo uma experiência completa de comércio através de uma interface gráfica moderna e amigável.
     </p>
     <p>
-      Com recursos avançados como incremento proporcional, fila de leilões, histórico detalhado e sistema de depósito, o gAuction traz uma solução completa para servidores que buscam um sistema de leilões confiável e fácil de usar.
+        Com recursos avançados como incremento proporcional, fila de leilões, histórico detalhado e sistema de depósito, o gAuction traz uma solução completa para servidores que buscam um sistema de leilões confiável e fácil de usar.
     </p>
     <p>
-      Desenvolvido pensando tanto em jogadores quanto em administradores, oferece controles granulares, sistema de permissões e uma variedade de comandos para gerenciamento eficiente.
+        Desenvolvido pensando tanto em jogadores quanto em administradores, oferece controles granulares, sistema de permissões e uma variedade de comandos para gerenciamento eficiente.
     </p>
-  </div>
 </div>
 
 <br clear="left"/>
