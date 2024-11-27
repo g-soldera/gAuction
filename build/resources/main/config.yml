@@ -1,0 +1,20 @@
+# Auction settings
+auction:
+  duration: 300
+  max_queue_size: 10
+  step:
+    enabled: true
+    percentage: 10.0
+  fees:
+    publication: 0.0
+    bid: 0.0
+  banned_items: []
+
+# Database settings
+database:
+  type: SQLITE
+  host: localhost
+  port: 3306
+  name: gauction
+  user: root
+  password: ""

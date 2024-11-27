@@ -1,0 +1,100 @@
+plugins {
+    id 'java'
+    id 'maven-publish'  // Suporte para publicação
+}
+
+group = 'com.gsoldera'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "papermc-repo"
+        url = "https://repo.papermc.io/repository/maven-public/"
+    }
+    maven {
+        name = "codemc-repo"
+        url = "https://repo.codemc.org/repository/maven-public"
+    }
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/groups/public/"
+    }
+    // Repositórios para SQLite e MySQL
+    maven {
+        name = "jitpack"
+        url = "https://jitpack.io"
+    }
+}
+
+dependencies {
+    // Paper API
+    compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
+
+    // Economy API
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7")  // Vault
+
+    // Banco de Dados
+    implementation("org.xerial:sqlite-jdbc:3.42.0.0")  // SQLite
+    implementation("com.zaxxer:HikariCP:5.0.1")  // Conexão de pool para MySQL
+    implementation("mysql:mysql-connector-java:8.0.33")  // Conector MySQL
+
+    // Utilitários
+    implementation("com.google.code.gson:gson:2.10.1")  // Serialização JSON
+    implementation("org.slf4j:slf4j-api:2.0.7") // Logging
+
+    // Testes
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.3")
+}
+
+def targetJavaVersion = 17
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release.set(targetJavaVersion)
+    }
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('paper-plugin.yml') {
+        expand props
+    }
+}
+
+// Configuração de testes
+test {
+    useJUnitPlatform()
+}
+
+// Configuração de publicação
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+// Criar JAR com dependências
+task buildFatJar(type: Jar) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes 'Main-Class': 'com.gsoldera.gAuction.GAuctionPlugin'
+    }
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
