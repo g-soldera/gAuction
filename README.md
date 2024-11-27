@@ -4,140 +4,141 @@
     <br clear="left"/>
     <div style="text-align: left; max-width: 600px;">
         <p>
-            Um sistema de leilões robusto e intuitivo para servidores Minecraft, oferecendo uma experiência completa de comércio através de uma interface gráfica moderna e amigável.
+            A robust and intuitive auction system for Minecraft servers, offering a complete trading experience through a modern and user-friendly graphical interface.
         </p>
         <p>
-            Com recursos avançados como incremento proporcional, fila de leilões, histórico detalhado e sistema de depósito, o gAuction traz uma solução completa para servidores que buscam um sistema de leilões confiável e fácil de usar.
+            With advanced features such as proportional increment, auction queue, detailed history, and warehouse system, gAuction provides a complete solution for servers seeking a reliable and easy-to-use auction system.
         </p>
         <p>
-            Desenvolvido pensando tanto em jogadores quanto em administradores, oferece controles granulares, sistema de permissões e uma variedade de comandos para gerenciamento eficiente.
+            Developed with both players and administrators in mind, it offers granular controls, permission system, and a variety of commands for efficient management.
         </p>
     </div>
 </div>
 
 <br clear="left"/>
 
-## 📋 Características
+## 📋 Features
 
-- **Sistema de Leilões em Tempo Real**
-  - Leilões com temporizador automático e avisos
-  - Sistema de lances incrementais (fixo ou porcentagem)
-  - Fila de leilões organizada
-  - Histórico completo de transações
-  - Depósito de itens (warehouse)
+- **Real-Time Auction System**
+  - Auctions with automatic timer and warnings
+  - Incremental bidding system (fixed or percentage)
+  - Organized auction queue
+  - Complete transaction history
+  - Item warehouse system
 
-- **Interface Gráfica Intuitiva**
-  - Menu principal com todas as funcionalidades
-  - Sistema de lances rápidos e personalizados
-  - Visualização e gerenciamento da fila de leilões
-  - Histórico detalhado com filtros pessoais
-  - Depósito para coleta de itens
+- **Intuitive Graphical Interface**
+  - Main menu with all functionalities
+  - Quick and custom bidding system
+  - Auction queue visualization and management
+  - Detailed history with personal filters
+  - Item collection warehouse
 
-- **Recursos Administrativos**
-  - Controle total sobre leilões ativos
-  - Sistema de banimento de itens (item na mão ou baú)
-  - Configuração flexível de durações
-  - Gerenciamento da fila de leilões
-  - Comandos de administração
+- **Administrative Features**
+  - Complete control over active auctions
+  - Item banning system (hand item or chest)
+  - Flexible duration configuration
+  - Queue management
+  - Administrative commands
 
-- **Economia Integrada**
-  - Suporte completo ao Vault
-  - Taxa de publicação configurável
-  - Sistema de reembolso automático
-  - Histórico financeiro detalhado
-  - Incremento de lances configurável
+- **Integrated Economy**
+  - Full Vault support
+  - Configurable publication fees
+  - Automatic refund system
+  - Detailed financial history
+  - Configurable bid increments
 
-## 🚀 Instalação
+## 🚀 Installation
 
-1. Certifique-se de ter o Vault instalado
-2. Baixe o arquivo `.jar` mais recente [aqui](https://github.com/g-soldera/gAuction/releases)
-3. Coloque o arquivo na pasta `plugins` do seu servidor
-4. Reinicie o servidor
-5. Configure o plugin conforme necessário
+1. Make sure you have Vault installed
+2. Download the latest `.jar` file [here](https://github.com/g-soldera/gAuction/releases)
+3. Place the file in your server's `plugins` folder
+4. Restart the server
+5. Configure the plugin as needed
 
-### 📋 Dependências
+### 📋 Dependencies
 
 - Vault
-- Servidor Minecraft 1.20+
-- Java 17 ou superior
+- Minecraft Server 1.20+
+- Java 17 or higher
 
-## ⚙️ Configuração
+## ⚙️ Configuration
 
 ### config.yml
 
 ```yaml
 # Auction settings
 auction:
-  duration: 300 # Duração padrão dos leilões em segundos
-  max_queue_size: 10 # Tamanho máximo da fila de leilões
+  duration: 300 # Default auction duration in seconds
+  max_queue_size: 10 # Maximum auction queue size
   step:
-    enabled: true # Habilita incremento mínimo
-    percentage: 10.0 # Porcentagem do valor inicial
+    enabled: true # Enable minimum increment
+    percentage: 10.0 # Percentage of initial value
   fees:
-    publication: 0.0
-    bid: 0.0 # Taxa sobre o lance final
-  banned_items: [] # Lista de itens banidos
+    publication: 0.0 # Fee for creating an auction
+    bid: 0.0 # Fee on final bid
+  banned_items: [] # List of banned items
 
 # Database settings
 database:
-  type: SQLITE # Tipo de banco de dados (SQLITE, MYSQL)
-  host: localhost # Host do banco de dados (Mysql)
-  port: 3306 # Porta do banco de dados (Mysql)
-  name: gauction # Nome do banco de dados (Mysql)
-  user: root # Usuário do banco de dados (Mysql)
-  password: "" # Senha do banco de dados (Mysql)
+  type: SQLITE # Database type (SQLITE, MYSQL)
+  host: localhost # Database host (MySQL)
+  port: 3306 # Database port (MySQL)
+  name: gauction # Database name (MySQL)
+  user: root # Database user (MySQL)
+  password: "" # Database password (MySQL)
 ```
 
-## 🎮 Comandos
+## 🎮 Commands
 
-### Comandos do Jogador
-- `/leilao` - Abre o menu principal
-- `/leilao criar [lance_min] [incremento]` - Cria um novo leilão
-- `/leilao lance <valor>` - Dá um lance no leilão atual
-- `/leilao info` - Mostra informações do leilão atual
+### Player Commands
+- `/auction` - Opens the main menu
+- `/auction create [min_bid] [increment]` - Creates a new auction
+- `/auction bid <amount>` - Places a bid on current auction
+- `/auction info` - Shows current auction information
 
-### Comandos Administrativos
-- `/leilaoadmin banitem` - Bane o item na mão
-- `/leilaoadmin banchest` - Bane itens no baú
-- `/leilaoadmin setduration <segundos>` - Define duração do leilão
-- `/leilaoadmin cancelauction` - Cancela leilão atual
-- `/leilaoadmin forcestart [lance min] [incremento]` - Força início do leilão
-- `/leilaoadmin reload` - Recarrega configuração
+### Admin Commands
+- `/auctionadmin banitem` - Bans item in hand
+- `/auctionadmin banchest` - Bans items in chest
+- `/auctionadmin setduration <seconds>` - Sets auction duration
+- `/auctionadmin cancelauction` - Cancels current auction
+- `/auctionadmin forcestart [min bid] [increment]` - Force starts an auction
+- `/auctionadmin reload` - Reloads configuration
 
-## 🔒 Permissões
+## 🔒 Permissions
 
-- `gauction.admin` - Acesso a comandos administrativos
+- `gauction.admin` - Access to administrative commands
 
-## 📦 Funcionalidades Detalhadas
+## 📦 Detailed Features
 
-### Sistema de Leilões
-- Criação via comando ou interface
-- Incremento automático configurável
-- Temporizador com avisos
-- Sistema de fila organizado
-- Cancelamento e gerenciamento
+### Auction System
+- Creation via command or interface
+- Configurable automatic increment
+- Timer with warnings
+- Organized queue system
+- Cancellation and management
 
-### Interface Gráfica
-- Menu principal intuitivo
-- Sistema de lances simplificado
-- Visualização da fila de leilões
-- Histórico com filtros
-- Depósito de itens
+### Graphical Interface
+- Intuitive main menu
+- Simplified bidding system
+- Auction queue visualization
+- History with filters
+- Item warehouse
 
-### Warehouse (Depósito)
-- Armazenamento automático de itens
-- Coleta individual ou em massa
-- Status detalhado dos itens
-- Sistema de coleta seguro
+### Warehouse System
+- Automatic item storage
+- Individual or mass collection
+- Detailed item status
+- Secure collection system
 
-## 📝 Licença
+## 📝 License
 
-Este projeto está sob a licença MIT - veja o arquivo [LICENSE.md](LICENSE.md) para detalhes
+This project is under the MIT license - see the [LICENSE.md](LICENSE.md) file for details
 
-## 👥 Autor
+## 👥 Author
 
-- **Gustavo Soldera** - *Desenvolvimento* - [gsoldera](https://github.com/g-soldera)
+- **Gustavo Soldera** - *Development* - [gsoldera](https://github.com/g-soldera)
 
-## 📞 Suporte
+## 📞 Support
 
-Para suporte, abra uma issue no GitHub ou entre em contato através do Discord
+For support, open an issue on GitHub or contact me through Discord (gsoldera)
+
