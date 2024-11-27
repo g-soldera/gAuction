@@ -1,7 +1,4 @@
-build
-bin
-.idea
-.gradle
 /.gradle
 /bin
 /build
+/.idea
