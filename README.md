@@ -35,7 +35,7 @@ Um sistema de leilões robusto e intuitivo para servidores Minecraft, permitindo
 ## 🚀 Instalação
 
 1. Certifique-se de ter o Vault instalado
-2. Baixe o arquivo `.jar` mais recente
+2. Baixe o arquivo `.jar` mais recente [aqui](https://github.com/g-soldera/gAuction/releases)
 3. Coloque o arquivo na pasta `plugins` do seu servidor
 4. Reinicie o servidor
 5. Configure o plugin conforme necessário
