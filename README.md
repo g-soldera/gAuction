@@ -140,4 +140,5 @@ This project is under the MIT license - see the [LICENSE.md](LICENSE.md) file fo
 
 ## 📞 Support
 
-For support, open an issue on GitHub or contact us through Discord
+For support, open an issue on GitHub or contact me through Discord (gsoldera)
+
