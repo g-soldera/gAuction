@@ -13,6 +13,7 @@ commands:
       - leilão
   auctionadmin:
     description: Comandos administrativos de leilão
+    permission: gauction.admin
     aliases:
       - leilaoadmin
       - leilãoadmin
