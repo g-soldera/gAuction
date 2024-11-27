@@ -185,7 +185,7 @@ public final class AuctionBidGUI implements InventoryHolder {
     public void handleInventoryClick(Player player, int slot) {
         if (currentAuction == null) {
             Map<String, String> placeholders = new HashMap<>();
-            messageManager.sendMessage(player, "messages.player.bids.no_auction", placeholders);
+            messageManager.sendMessage(player, "messages.player.bids.failed.no_auction", placeholders);
             player.closeInventory();
             return;
         }
@@ -200,7 +200,7 @@ public final class AuctionBidGUI implements InventoryHolder {
     public void open() {
         if (currentAuction == null) {
             Map<String, String> placeholders = new HashMap<>();
-            messageManager.sendMessage(player, "messages.player.bids.no_auction", placeholders);
+            messageManager.sendMessage(player, "messages.player.bids.failed.no_auction", placeholders);
             return;
         }
         player.openInventory(inventory);

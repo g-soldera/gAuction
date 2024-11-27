@@ -8,6 +8,10 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -31,6 +35,8 @@ public final class AuctionMainGUI implements InventoryHolder {
     private static final int BID_BUTTON_SLOT = 29;
     private static final int WAREHOUSE_BUTTON_SLOT = 33;
     private static final int HISTORY_BUTTON_SLOT = 40;
+    private static final int CREATE_AUCTION_SLOT = 4;
+    private static final int QUEUE_BUTTON_SLOT = 31;
 
     public AuctionMainGUI(GAuctionPlugin plugin, Player player) {
         this.plugin = plugin;
@@ -57,6 +63,12 @@ public final class AuctionMainGUI implements InventoryHolder {
         inventory.setItem(BID_BUTTON_SLOT, createBidButton());
         inventory.setItem(WAREHOUSE_BUTTON_SLOT, createWarehouseButton());
         inventory.setItem(HISTORY_BUTTON_SLOT, createHistoryButton());
+        
+        ItemStack handItem = player.getInventory().getItemInMainHand();
+        if (handItem.getType() != Material.AIR) {
+            inventory.setItem(CREATE_AUCTION_SLOT, createQuickAuctionButton(handItem));
+        }
+        inventory.setItem(QUEUE_BUTTON_SLOT, createQueueButton());
     }
 
     @SuppressWarnings("deprecation")
@@ -158,6 +170,39 @@ public final class AuctionMainGUI implements InventoryHolder {
     }
 
     @SuppressWarnings("deprecation")
+    private ItemStack createQuickAuctionButton(ItemStack handItem) {
+        ItemStack displayItem = handItem.clone();
+        ItemMeta meta = displayItem.getItemMeta();
+        if (meta != null) {
+            Map<String, String> placeholders = new HashMap<>();
+            meta.setDisplayName(messageManager.getPlainMessage("gui.main.quick_auction.title", placeholders));
+            
+            List<String> lore = new ArrayList<>();
+            lore.add(messageManager.getPlainMessage("gui.main.quick_auction.description", placeholders));
+            meta.setLore(lore);
+            displayItem.setItemMeta(meta);
+        }
+        return displayItem;
+    }
+
+    @SuppressWarnings("deprecation")
+    private ItemStack createQueueButton() {
+        ItemStack button = new ItemStack(Material.HOPPER);
+        ItemMeta meta = button.getItemMeta();
+        if (meta != null) {
+            Map<String, String> placeholders = new HashMap<>();
+            meta.setDisplayName(messageManager.getPlainMessage("gui.main.queue_button.title", placeholders));
+            
+            List<String> lore = new ArrayList<>();
+            lore.add(messageManager.getPlainMessage("gui.main.queue_button.description", placeholders));
+            meta.setLore(lore);
+            
+            button.setItemMeta(meta);
+        }
+        return button;
+    }
+
+    @SuppressWarnings("deprecation")
     private void fillBorders() {
         ItemStack border = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta meta = border.getItemMeta();
@@ -199,7 +244,66 @@ public final class AuctionMainGUI implements InventoryHolder {
                 player.closeInventory();
                 new AuctionHistoryGUI(plugin, player).open();
             }
+            case CREATE_AUCTION_SLOT -> {
+                handleQuickAuction(player);
+            }
+            case QUEUE_BUTTON_SLOT -> {
+                player.closeInventory();
+                new AuctionQueueGUI(plugin, player).open();
+            }
         }
+    }
+
+    private void handleQuickAuction(Player player) {
+        ItemStack handItem = player.getInventory().getItemInMainHand();
+        if (handItem.getType() == Material.AIR) {
+            Map<String, String> placeholders = new HashMap<>();
+            messageManager.sendMessage(player, "messages.player.auction.no_item", placeholders);
+            return;
+        }
+
+        player.closeInventory();
+        
+        Map<String, String> placeholders = new HashMap<>();
+        messageManager.sendMessage(player, "gui.main.quick_auction.prompt", placeholders);
+        
+        Listener chatListener = new Listener() {
+            @SuppressWarnings("deprecation")
+            @EventHandler
+            public void onChat(AsyncPlayerChatEvent event) {
+                if (!event.getPlayer().equals(player)) return;
+                event.setCancelled(true);
+                
+                if (event.getMessage().equalsIgnoreCase("cancel")) {
+                    Map<String, String> placeholders = new HashMap<>();
+                    messageManager.sendMessage(player, "gui.main.quick_auction.cancelled", placeholders);
+                    HandlerList.unregisterAll(this);
+                    return;
+                }
+                
+                try {
+                    double minBid = Double.parseDouble(event.getMessage());
+                    if (minBid <= 0) {
+                        Map<String, String> placeholders = new HashMap<>();
+                        messageManager.sendMessage(player, "messages.player.auction.invalid_min_bid", placeholders);
+                        return;
+                    }
+                    
+                    double stepValue = minBid * (plugin.getConfigManager().getStepPercentage() / 100.0);
+                    
+                    AuctionConfirmGUI confirmGUI = new AuctionConfirmGUI(plugin, player, handItem, minBid, stepValue);
+                    Bukkit.getScheduler().runTask(plugin, () -> player.openInventory(confirmGUI.getInventory()));
+                    
+                } catch (NumberFormatException e) {
+                    Map<String, String> placeholders = new HashMap<>();
+                    messageManager.sendMessage(player, "messages.player.auction.invalid_min_bid", placeholders);
+                } finally {
+                    HandlerList.unregisterAll(this);
+                }
+            }
+        };
+        
+        Bukkit.getPluginManager().registerEvents(chatListener, plugin);
     }
 
     public void refresh() {

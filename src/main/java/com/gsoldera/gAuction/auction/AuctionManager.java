@@ -3,7 +3,9 @@ package com.gsoldera.gAuction.auction;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
@@ -722,5 +724,31 @@ public final class AuctionManager {
         EXPIRED,
         CANCELLED,
         COLLECTED
+    }
+
+    public List<AuctionItem> getQueuePreview(int limit) {
+        List<AuctionItem> preview = new ArrayList<>();
+        if (currentAuction != null) {
+            preview.add(currentAuction);
+        }
+        preview.addAll(auctionQueue.stream().limit(limit - 1).toList());
+        return preview;
+    }
+
+    public AuctionItem getQueueItemAt(int index) {
+        if (index < 0) return null;
+        if (index == 0) return currentAuction;
+        
+        List<AuctionItem> queueList = new ArrayList<>(auctionQueue);
+        index--;
+        return index < queueList.size() ? queueList.get(index) : null;
+    }
+
+    public void removeFromQueue(AuctionItem auction) {
+        if (auction == currentAuction) {
+            setCurrentAuction(null);
+        } else {
+            auctionQueue.remove(auction);
+        }
     }
 }
