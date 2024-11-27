@@ -1,7 +1,5 @@
-# gAuction
-
 <div align="center" style="display: flex; align-items: center; margin-bottom: 20px;">
-  <img src="./gauction.gif" width="300" height="300" style="margin-right: 40px;">
+  <img src="./gauction.gif" alt="gAuction" width="300" height="300" style="margin-right: 40px;">
   <div style="text-align: left; max-width: 600px;">
     <p>
       Um sistema de leilões robusto e intuitivo para servidores Minecraft, oferecendo uma experiência completa de comércio através de uma interface gráfica moderna e amigável.
