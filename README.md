@@ -1,6 +1,20 @@
-# gAuction
+<div align="center">
+    <img src="./gauction.gif" alt="gAuction" width="300" height="300" style="margin-right: 40px;">
+    <br clear="left"/>
+    <div style="text-align: left; max-width: 600px;">
+        <p>
+            Um sistema de leilões robusto e intuitivo para servidores Minecraft, oferecendo uma experiência completa de comércio através de uma interface gráfica moderna e amigável.
+        </p>
+        <p>
+            Com recursos avançados como incremento proporcional, fila de leilões, histórico detalhado e sistema de depósito, o gAuction traz uma solução completa para servidores que buscam um sistema de leilões confiável e fácil de usar.
+        </p>
+        <p>
+            Desenvolvido pensando tanto em jogadores quanto em administradores, oferece controles granulares, sistema de permissões e uma variedade de comandos para gerenciamento eficiente.
+        </p>
+    </div>
+</div>
 
-Um sistema de leilões robusto e intuitivo para servidores Minecraft, permitindo que jogadores vendam e comprem itens através de uma interface gráfica amigável.
+<br clear="left"/>
 
 ## 📋 Características
 
@@ -35,7 +49,7 @@ Um sistema de leilões robusto e intuitivo para servidores Minecraft, permitindo
 ## 🚀 Instalação
 
 1. Certifique-se de ter o Vault instalado
-2. Baixe o arquivo `.jar` mais recente
+2. Baixe o arquivo `.jar` mais recente [aqui](https://github.com/g-soldera/gAuction/releases)
 3. Coloque o arquivo na pasta `plugins` do seu servidor
 4. Reinicie o servidor
 5. Configure o plugin conforme necessário
