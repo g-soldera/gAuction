@@ -5,3 +5,7 @@
 .gradle/8.8/executionHistory/executionHistory.bin
 /.gradle
 /bin
+/.gradle
+/gradle
+/.gradle
+*.lock
