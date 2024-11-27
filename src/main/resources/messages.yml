@@ -96,6 +96,7 @@ messages:
       failed:
         no_auction: "{prefix}&cNão há leilão ativo no momento"
         seller: "{prefix}&cVocê não pode dar lance no seu próprio leilão!"
+        bidder: "{prefix}&cVocê já possui o lance mais alto!"
         balance: "{prefix}&cVocê não tem dinheiro suficiente!"
       outbid: "{prefix}&cSeu lance foi superado! Seu lance anterior foi reembolsado."
       minimum_bid: "{prefix}&cLance mínimo é {min_bid}"
