@@ -208,8 +208,6 @@ public final class AuctionHistoryGUI implements InventoryHolder {
     }
 
     private void updateNavigationButtons() {
-        inventory.setItem(BACK_BUTTON_SLOT, createBackButton());
-
         if (currentPage > 0) {
             inventory.setItem(PREV_PAGE_SLOT, createNavigationButton(true));
         }
@@ -269,6 +267,12 @@ public final class AuctionHistoryGUI implements InventoryHolder {
         fillBorders();
         displayCurrentPage();
         updateNavigationButtons();
+        createSpecialButtons();
+    }
+
+    private void createSpecialButtons() {
+        inventory.setItem(BACK_BUTTON_SLOT, createBackButton());
+        inventory.setItem(FILTER_BUTTON_SLOT, createFilterButton());
     }
 
     @Override
