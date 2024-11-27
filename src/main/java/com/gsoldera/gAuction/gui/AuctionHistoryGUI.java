@@ -44,8 +44,8 @@ public final class AuctionHistoryGUI implements InventoryHolder {
     private static final int LAST_SLOT = 43;
     private static final int PREV_PAGE_SLOT = 45;
     private static final int NEXT_PAGE_SLOT = 53;
-    private static final int BACK_BUTTON_SLOT = 49;
-    private static final int FILTER_BUTTON_SLOT = 51;
+    private static final int BACK_BUTTON_SLOT = 48;
+    private static final int FILTER_BUTTON_SLOT = 50;
 
     private record HistoryEntry(
         ItemStack item,
@@ -121,8 +121,7 @@ public final class AuctionHistoryGUI implements InventoryHolder {
         fillBorders();
         displayCurrentPage();
         updateNavigationButtons();
-        inventory.setItem(BACK_BUTTON_SLOT, createBackButton());
-        inventory.setItem(FILTER_BUTTON_SLOT, createFilterButton());
+        createSpecialButtons();
     }
 
     private void clearInventory() {
