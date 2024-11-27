@@ -3,7 +3,9 @@ package com.gsoldera.gAuction.auction;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
@@ -722,5 +724,89 @@ public final class AuctionManager {
         EXPIRED,
         CANCELLED,
         COLLECTED
+    }
+
+    public List<AuctionItem> getQueuePreview(int limit) {
+        List<AuctionItem> preview = new ArrayList<>();
+        if (currentAuction != null) {
+            preview.add(currentAuction);
+        }
+        preview.addAll(auctionQueue.stream().limit(limit - 1).toList());
+        return preview;
+    }
+
+    public AuctionItem getQueueItemAt(int index) {
+        if (index < 0) return null;
+        if (index == 0) return currentAuction;
+        
+        List<AuctionItem> queueList = new ArrayList<>(auctionQueue);
+        index--;
+        return index < queueList.size() ? queueList.get(index) : null;
+    }
+
+    public void removeFromQueue(AuctionItem auction) {
+        if (auction == currentAuction) {
+            setCurrentAuction(null);
+        } else {
+            auctionQueue.remove(auction);
+        }
+    }
+
+    public void cancelCurrentAuction() {
+        try {
+            auctionLock.lock();
+            if (currentAuction != null) {
+                saveToWarehouse(currentAuction, AuctionStatus.CANCELLED);
+                
+                if (currentAuction.getCurrentBidderUUID() != null) {
+                    Player currentBidder = Bukkit.getPlayer(currentAuction.getCurrentBidderUUID());
+                    if (currentBidder != null) {
+                        economyManager.depositPlayer(currentBidder, currentAuction.getCurrentBid());
+                        
+                        Map<String, String> placeholders = new HashMap<>();
+                        placeholders.put("bid", String.valueOf(currentAuction.getCurrentBid()));
+                        messageManager.sendMessage(currentBidder, "messages.player.bids.refunded", placeholders);
+                    }
+                }
+
+                currentAuction = null;
+                cancelAllTimers();
+                scheduleNextAuction();
+                refreshAllGUIs();
+            }
+        } finally {
+            auctionLock.unlock();
+        }
+    }
+
+    public void cancelQueuedAuction(AuctionItem auction) {
+        try {
+            auctionLock.lock();
+            if (auctionQueue.remove(auction)) {
+                saveToWarehouse(auction, AuctionStatus.CANCELLED);
+                refreshAllGUIs();
+            }
+        } finally {
+            auctionLock.unlock();
+        }
+    }
+
+    public void clearAllAuctions() {
+        try {
+            auctionLock.lock();
+            
+            if (currentAuction != null) {
+                cancelCurrentAuction();
+            }
+
+            while (!auctionQueue.isEmpty()) {
+                AuctionItem auction = auctionQueue.poll();
+                saveToWarehouse(auction, AuctionStatus.CANCELLED);
+            }
+
+            refreshAllGUIs();
+        } finally {
+            auctionLock.unlock();
+        }
     }
 }

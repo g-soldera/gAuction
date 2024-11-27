@@ -123,12 +123,14 @@ gui:
     history_button:
       title: "&5Histórico"
       description: "&7Veja os leilões anteriores"
-    create_button:
+    quick_auction:
       title: "&6Criar Leilão"
-      description: "&7Clique para criar um novo leilão"
-    create_auction:
-      prompt: "&aDigite o valor inicial do leilão no chat (ou 'cancel' para cancelar)"
-      cancelled: "&cCriação do leilão cancelada"
+      description: "&7Clique para leiloar este item"
+      prompt: "{prefix}&aDigite o valor inicial do leilão no chat (ou 'cancel' para cancelar)"
+      cancelled: "{prefix}&cCriação do leilão cancelada"
+    queue_button:
+      title: "&6Fila de Leilões"
+      description: "&7Clique para ver os próximos leilões"
 
   confirm:
     title: "&6Confirmar Leilão"
@@ -214,3 +216,27 @@ gui:
       back:
         title: "&cVoltar ao Menu Principal"
         description: "&7Clique para voltar ao menu principal"
+
+  queue:
+    title: "&6Fila de Leilões"
+    empty:
+      title: "&cNenhum Leilão na Fila"
+      description: "&7Não há leilões aguardando"
+    item:
+      seller: "&fVendedor: &7{seller}"
+      min_bid: "&fLance Inicial: &6{min_bid}"
+      step: "&fIncremento: &6{step}"
+      admin_remove: "&cBotão direito para remover este leilão"
+    messages:
+      removed: "{prefix}&cLeilão removido da fila"
+      cancelled: "{prefix}&cLeilão atual cancelado"
+    buttons:
+      back:
+        title: "&cVoltar ao Menu Principal"
+        description: "&7Clique para voltar ao menu principal"
+      clear:
+        title: "&cLimpar Fila"
+        description: "&7Clique para cancelar todos os leilões"
+      current_cancelled: "{prefix}&cLeilão atual cancelado"
+      removed: "{prefix}&cLeilão removido da fila"
+      queue_cleared: "{prefix}&cTodos os leilões foram cancelados"

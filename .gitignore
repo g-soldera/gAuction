@@ -1,4 +1,7 @@
-build
-bin
-.idea
-.gradle
+/.gradle
+/bin
+/build
+/.idea
+.gradle/8.8/executionHistory/executionHistory.bin
+/.gradle
+/bin
