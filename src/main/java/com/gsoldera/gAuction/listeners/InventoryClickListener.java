@@ -11,8 +11,8 @@ import com.gsoldera.gAuction.gui.AuctionBidGUI;
 import com.gsoldera.gAuction.gui.AuctionConfirmGUI;
 import com.gsoldera.gAuction.gui.AuctionHistoryGUI;
 import com.gsoldera.gAuction.gui.AuctionMainGUI;
+import com.gsoldera.gAuction.gui.AuctionQueueGUI;
 import com.gsoldera.gAuction.gui.AuctionWarehouseGUI;
-
 /**
  * Handles inventory click events for auction GUIs
  * Delegates click handling to appropriate GUI classes
@@ -53,6 +53,10 @@ public final class InventoryClickListener implements Listener {
         else if (holder instanceof AuctionWarehouseGUI gui) {
             event.setCancelled(true);
             gui.handleInventoryClick(player, event.getRawSlot());
+        }
+        else if (holder instanceof AuctionQueueGUI gui) {
+            event.setCancelled(true);
+            gui.handleInventoryClick(player, event.getRawSlot(), event.isRightClick());
         }
     }
 } 

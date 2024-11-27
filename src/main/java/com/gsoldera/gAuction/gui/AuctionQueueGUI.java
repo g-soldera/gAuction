@@ -23,6 +23,7 @@ public final class AuctionQueueGUI implements InventoryHolder {
     private final MessageManager messageManager;
     private Inventory inventory;
     private static final int ROWS = 3;
+    private static final int BACK_BUTTON_SLOT = 22;
 
     public AuctionQueueGUI(GAuctionPlugin plugin, Player player) {
         this.plugin = plugin;
@@ -50,6 +51,8 @@ public final class AuctionQueueGUI implements InventoryHolder {
         for (AuctionItem auction : queueItems) {
             inventory.setItem(slot++, createQueueItemDisplay(auction));
         }
+
+        inventory.setItem(BACK_BUTTON_SLOT, createBackButton());
     }
 
     @SuppressWarnings("deprecation")
@@ -79,13 +82,40 @@ public final class AuctionQueueGUI implements InventoryHolder {
         return displayItem;
     }
 
+    @SuppressWarnings("deprecation")
+    private ItemStack createBackButton() {
+        ItemStack button = new ItemStack(Material.ARROW);
+        ItemMeta meta = button.getItemMeta();
+        if (meta != null) {
+            Map<String, String> placeholders = new HashMap<>();
+            meta.setDisplayName(messageManager.getPlainMessage("gui.queue.buttons.back.title", placeholders));
+            
+            List<String> lore = new ArrayList<>();
+            lore.add(messageManager.getPlainMessage("gui.queue.buttons.back.description", placeholders));
+            meta.setLore(lore);
+            
+            button.setItemMeta(meta);
+        }
+        return button;
+    }
+
     public void handleInventoryClick(Player player, int slot, boolean isRightClick) {
-        if (!player.hasPermission("gauction.admin") || !isRightClick) return;
-        
-        AuctionItem clickedAuction = plugin.getAuctionManager().getQueueItemAt(slot - 10);
-        if (clickedAuction != null) {
-            plugin.getAuctionManager().removeFromQueue(clickedAuction);
-            refresh();
+        if (slot >= 0 && slot < inventory.getSize()) {
+            if (slot == BACK_BUTTON_SLOT) {
+                player.closeInventory();
+                new AuctionMainGUI(plugin, player).open();
+                return;
+            }
+
+            if (player.hasPermission("gauction.admin") && isRightClick) {
+                AuctionItem clickedAuction = plugin.getAuctionManager().getQueueItemAt(slot - 10);
+                if (clickedAuction != null) {
+                    plugin.getAuctionManager().removeFromQueue(clickedAuction);
+                    Map<String, String> placeholders = new HashMap<>();
+                    messageManager.sendMessage(player, "gui.queue.messages.removed", placeholders);
+                    refresh();
+                }
+            }
         }
     }
 

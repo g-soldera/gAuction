@@ -230,3 +230,7 @@ gui:
     messages:
       removed: "{prefix}&cLeilão removido da fila"
       cancelled: "{prefix}&cLeilão atual cancelado"
+    buttons:
+      back:
+        title: "&cVoltar ao Menu Principal"
+        description: "&7Clique para voltar ao menu principal"
