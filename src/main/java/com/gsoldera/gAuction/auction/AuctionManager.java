@@ -464,26 +464,32 @@ public final class AuctionManager {
         try {
             auctionLock.lock();
 
+            UUID previousBidderUUID = currentAuction.getCurrentBidderUUID();
+            double previousBidAmount = currentAuction.getCurrentBid();
+
             if (currentAuction == null) {
                 Map<String, String> placeholders = new HashMap<>();
                 messageManager.sendMessage(bidder, "messages.player.bids.failed.no_auction", placeholders);
                 return false;
             }
 
-            // if (currentAuction.getSellerUUID().equals(bidder.getUniqueId())) {
-            //     Map<String, String> placeholders = new HashMap<>();
-            //     messageManager.sendMessage(bidder, "messages.player.bids.failed.seller", placeholders);
-            //     return false;
-            // }
+            if (currentAuction.getSellerUUID().equals(bidder.getUniqueId())) {
+                Map<String, String> placeholders = new HashMap<>();
+                messageManager.sendMessage(bidder, "messages.player.bids.failed.seller", placeholders);
+                return false;
+            }
+
+            if (previousBidderUUID != null && previousBidderUUID.equals(bidder.getUniqueId())) {
+                Map<String, String> placeholders = new HashMap<>();
+                messageManager.sendMessage(bidder, "messages.player.bids.failed.bidder", placeholders);
+                return false;
+            }
 
             if (!economyManager.hasBalance(bidder, amount)) {
                 Map<String, String> placeholders = new HashMap<>();
                 messageManager.sendMessage(bidder, "messages.player.bids.failed.balance", placeholders);
                 return false;
             }
-
-            UUID previousBidderUUID = currentAuction.getCurrentBidderUUID();
-            double previousBidAmount = currentAuction.getCurrentBid();
 
             if (!economyManager.withdrawPlayer(bidder, amount)) {
                 Map<String, String> placeholders = new HashMap<>();

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -17,6 +18,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import com.gsoldera.gAuction.GAuctionPlugin;
 import com.gsoldera.gAuction.messages.MessageManager;
@@ -32,7 +34,9 @@ public final class AuctionHistoryGUI implements InventoryHolder {
     private final MessageManager messageManager;
     private Inventory inventory;
     private int currentPage;
-    private final List<HistoryEntry> historyEntries;
+    private boolean showingPersonalOnly = false;
+    private List<HistoryEntry> allHistoryEntries;
+    private List<HistoryEntry> filteredHistoryEntries;
 
     private static final int ROWS = 6;
     private static final int PAGE_SIZE = 28;
@@ -40,7 +44,8 @@ public final class AuctionHistoryGUI implements InventoryHolder {
     private static final int LAST_SLOT = 43;
     private static final int PREV_PAGE_SLOT = 45;
     private static final int NEXT_PAGE_SLOT = 53;
-    private static final int BACK_BUTTON_SLOT = 49;
+    private static final int BACK_BUTTON_SLOT = 48;
+    private static final int FILTER_BUTTON_SLOT = 50;
 
     private record HistoryEntry(
         ItemStack item,
@@ -56,7 +61,6 @@ public final class AuctionHistoryGUI implements InventoryHolder {
         this.player = player;
         this.messageManager = plugin.getMessageManager();
         this.currentPage = 0;
-        this.historyEntries = new ArrayList<>();
 
         Map<String, String> placeholders = new HashMap<>();
         String title = messageManager.getPlainMessage("gui.history.title", placeholders);
@@ -71,23 +75,19 @@ public final class AuctionHistoryGUI implements InventoryHolder {
     }
 
     private void loadHistoryEntries() {
+        allHistoryEntries = new ArrayList<>();
         try (var conn = plugin.getDatabaseManager().getDatabaseConnection().getConnection();
              var stmt = conn.prepareStatement(
                 "SELECT item_serialized, seller_name, buyer_name, final_bid, end_time, status " +
                 "FROM auction_history " +
-                "WHERE seller_uuid = ? OR buyer_uuid = ? " +
                 "ORDER BY end_time DESC"
              )) {
             
-            String playerUUID = player.getUniqueId().toString();
-            stmt.setString(1, playerUUID);
-            stmt.setString(2, playerUUID);
-
             try (var rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     ItemStack item = ItemSerializer.deserializeItemStack(rs.getString("item_serialized"));
                     if (item != null) {
-                        historyEntries.add(new HistoryEntry(
+                        allHistoryEntries.add(new HistoryEntry(
                             item,
                             rs.getString("seller_name"),
                             rs.getString("buyer_name"),
@@ -98,11 +98,22 @@ public final class AuctionHistoryGUI implements InventoryHolder {
                     }
                 }
             }
+            updateFilteredEntries();
         } catch (SQLException e) {
             plugin.getPluginLogger().error("Error loading auction history", e);
-            Map<String, String> placeholders = new HashMap<>();
-            messageManager.sendMessage(player, "messages.player.error.history_load_failed", placeholders);
         }
+    }
+
+    private void updateFilteredEntries() {
+        if (showingPersonalOnly) {
+            filteredHistoryEntries = allHistoryEntries.stream()
+                .filter(entry -> player.getName().equals(entry.sellerName()) || 
+                               player.getName().equals(entry.buyerName()))
+                .collect(Collectors.toList());
+        } else {
+            filteredHistoryEntries = new ArrayList<>(allHistoryEntries);
+        }
+        currentPage = 0;
     }
 
     private void initializeItems() {
@@ -110,6 +121,7 @@ public final class AuctionHistoryGUI implements InventoryHolder {
         fillBorders();
         displayCurrentPage();
         updateNavigationButtons();
+        createSpecialButtons();
     }
 
     private void clearInventory() {
@@ -140,7 +152,7 @@ public final class AuctionHistoryGUI implements InventoryHolder {
 
     private void displayCurrentPage() {
         int startIndex = currentPage * PAGE_SIZE;
-        int endIndex = Math.min(startIndex + PAGE_SIZE, historyEntries.size());
+        int endIndex = Math.min(startIndex + PAGE_SIZE, filteredHistoryEntries.size());
         int slot = FIRST_SLOT;
         int itemsInCurrentRow = 0;
 
@@ -151,7 +163,7 @@ public final class AuctionHistoryGUI implements InventoryHolder {
                 itemsInCurrentRow = 0;
             }
             
-            HistoryEntry entry = historyEntries.get(i);
+            HistoryEntry entry = filteredHistoryEntries.get(i);
             inventory.setItem(slot++, createHistoryItem(entry));
             itemsInCurrentRow++;
         }
@@ -195,13 +207,11 @@ public final class AuctionHistoryGUI implements InventoryHolder {
     }
 
     private void updateNavigationButtons() {
-        inventory.setItem(BACK_BUTTON_SLOT, createBackButton());
-
         if (currentPage > 0) {
             inventory.setItem(PREV_PAGE_SLOT, createNavigationButton(true));
         }
 
-        int maxPages = (int) Math.ceil(historyEntries.size() / (double) PAGE_SIZE);
+        int maxPages = (int) Math.ceil(filteredHistoryEntries.size() / (double) PAGE_SIZE);
         if (currentPage < maxPages - 1) {
             inventory.setItem(NEXT_PAGE_SLOT, createNavigationButton(false));
         }
@@ -234,7 +244,7 @@ public final class AuctionHistoryGUI implements InventoryHolder {
             refreshInventory();
         } 
         else if (slot == NEXT_PAGE_SLOT) {
-            int maxPages = (int) Math.ceil(historyEntries.size() / (double) PAGE_SIZE);
+            int maxPages = (int) Math.ceil(filteredHistoryEntries.size() / (double) PAGE_SIZE);
             if (currentPage < maxPages - 1) {
                 currentPage++;
                 refreshInventory();
@@ -244,6 +254,11 @@ public final class AuctionHistoryGUI implements InventoryHolder {
             player.closeInventory();
             new AuctionMainGUI(plugin, player).open();
         }
+        else if (slot == FILTER_BUTTON_SLOT) {
+            showingPersonalOnly = !showingPersonalOnly;
+            updateFilteredEntries();
+            refreshInventory();
+        }
     }
 
     private void refreshInventory() {
@@ -251,6 +266,12 @@ public final class AuctionHistoryGUI implements InventoryHolder {
         fillBorders();
         displayCurrentPage();
         updateNavigationButtons();
+        createSpecialButtons();
+    }
+
+    private void createSpecialButtons() {
+        inventory.setItem(BACK_BUTTON_SLOT, createBackButton());
+        inventory.setItem(FILTER_BUTTON_SLOT, createFilterButton());
     }
 
     @Override
@@ -259,7 +280,7 @@ public final class AuctionHistoryGUI implements InventoryHolder {
     }
 
     public void open() {
-        if (historyEntries.isEmpty()) {
+        if (filteredHistoryEntries.isEmpty()) {
             Map<String, String> placeholders = new HashMap<>();
             messageManager.sendMessage(player, "gui.history.empty.description", placeholders);
             return;
@@ -280,6 +301,39 @@ public final class AuctionHistoryGUI implements InventoryHolder {
             meta.setLore(lore);
             
             button.setItemMeta(meta);
+        }
+        return button;
+    }
+
+    @SuppressWarnings("deprecation")
+    private ItemStack createFilterButton() {
+        ItemStack button;
+        if (showingPersonalOnly) {
+            button = new ItemStack(Material.PLAYER_HEAD);
+            if (button.getItemMeta() instanceof SkullMeta meta) {
+                meta.setOwningPlayer(player);
+                
+                Map<String, String> placeholders = new HashMap<>();
+                meta.setDisplayName(messageManager.getPlainMessage("gui.history.buttons.filter.personal.title", placeholders));
+                
+                List<String> lore = new ArrayList<>();
+                lore.add(messageManager.getPlainMessage("gui.history.buttons.filter.personal.description", placeholders));
+                meta.setLore(lore);
+                
+                button.setItemMeta(meta);
+            }
+        } else {
+            button = new ItemStack(Material.PLAYER_HEAD);
+            if (button.getItemMeta() instanceof SkullMeta meta) {
+                Map<String, String> placeholders = new HashMap<>();
+                meta.setDisplayName(messageManager.getPlainMessage("gui.history.buttons.filter.all.title", placeholders));
+                
+                List<String> lore = new ArrayList<>();
+                lore.add(messageManager.getPlainMessage("gui.history.buttons.filter.all.description", placeholders));
+                meta.setLore(lore);
+                
+                button.setItemMeta(meta);
+            }
         }
         return button;
     }

@@ -1,5 +1,5 @@
 name: GAuction
-version: 1.0
+version: 2.0
 main: com.gsoldera.gAuction.GAuctionPlugin
 description: Auction plugin for Minecraft
 author: GSoldera
@@ -13,6 +13,7 @@ commands:
       - leilão
   auctionadmin:
     description: Comandos administrativos de leilão
+    permission: gauction.admin
     aliases:
       - leilaoadmin
       - leilãoadmin

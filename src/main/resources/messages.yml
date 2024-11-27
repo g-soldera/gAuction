@@ -96,6 +96,7 @@ messages:
       failed:
         no_auction: "{prefix}&cNão há leilão ativo no momento"
         seller: "{prefix}&cVocê não pode dar lance no seu próprio leilão!"
+        bidder: "{prefix}&cVocê já possui o lance mais alto!"
         balance: "{prefix}&cVocê não tem dinheiro suficiente!"
       outbid: "{prefix}&cSeu lance foi superado! Seu lance anterior foi reembolsado."
       minimum_bid: "{prefix}&cLance mínimo é {min_bid}"
@@ -216,6 +217,13 @@ gui:
       back:
         title: "&cVoltar ao Menu Principal"
         description: "&7Clique para voltar ao menu principal"
+      filter:
+        all:
+          title: "&eTodos os leilões"
+          description: "&7Clique para ver apenas seus leilões"
+        personal:
+          title: "&eMeus leilões"
+          description: "&7Clique para ver todos os leilões"
 
   queue:
     title: "&6Fila de Leilões"
@@ -228,8 +236,9 @@ gui:
       step: "&fIncremento: &6{step}"
       admin_remove: "&cBotão direito para remover este leilão"
     messages:
-      removed: "{prefix}&cLeilão removido da fila"
-      cancelled: "{prefix}&cLeilão atual cancelado"
+      removed: "{prefix}&cItem removido da fila"
+      current_cancelled: "{prefix}&cLeilão atual cancelado"
+      queue_cleared: "{prefix}&cTodos os itens da fila foram cancelados"
     buttons:
       back:
         title: "&cVoltar ao Menu Principal"
@@ -237,6 +246,3 @@ gui:
       clear:
         title: "&cLimpar Fila"
         description: "&7Clique para cancelar todos os leilões"
-      current_cancelled: "{prefix}&cLeilão atual cancelado"
-      removed: "{prefix}&cLeilão removido da fila"
-      queue_cleared: "{prefix}&cTodos os leilões foram cancelados"
