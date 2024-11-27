@@ -77,7 +77,7 @@ public final class AuctionWarehouseGUI implements InventoryHolder {
              var stmt = conn.prepareStatement(
                 "SELECT id, item_serialized, seller_name, buyer_name, final_bid, end_time, status " +
                 "FROM auction_history " +
-                "WHERE (seller_uuid = ? AND status = 'EXPIRED') " +
+                "WHERE (seller_uuid = ? AND status in ('EXPIRED', 'CANCELLED')) " +
                 "OR (buyer_uuid = ? AND status = 'SOLD') " +
                 "ORDER BY end_time DESC"
              )) {
