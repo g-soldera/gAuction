@@ -216,6 +216,13 @@ gui:
       back:
         title: "&cVoltar ao Menu Principal"
         description: "&7Clique para voltar ao menu principal"
+      filter:
+        all:
+          title: "&eMostrar Todos os Leilões"
+          description: "&7Clique para ver apenas seus leilões"
+        personal:
+          title: "&eMeus Leilões"
+          description: "&7Clique para ver todos os leilões"
 
   queue:
     title: "&6Fila de Leilões"
