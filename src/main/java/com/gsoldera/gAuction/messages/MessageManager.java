@@ -28,6 +28,8 @@ public final class MessageManager {
     private boolean countdownEnabled;
     private boolean bidBroadcastsEnabled;
 
+    private String currentLanguage;
+
     /**
      * Creates a new message manager
      * @param plugin Plugin instance
@@ -39,12 +41,16 @@ public final class MessageManager {
     }
 
     /**
-     * Loads all messages from messages.yml
+     * Loads all messages from the appropriate language file
      */
     public void loadMessages() {
-        File messagesFile = new File(plugin.getDataFolder(), "messages.yml");
+        // Get language from config
+        currentLanguage = plugin.getConfig().getString("language", "en-US");
+        
+        // Load language file
+        File messagesFile = new File(plugin.getDataFolder(), "messages_" + currentLanguage + ".yml");
         if (!messagesFile.exists()) {
-            plugin.saveResource("messages.yml", false);
+            plugin.saveResource("messages_" + currentLanguage + ".yml", false);
         }
 
         messages = YamlConfiguration.loadConfiguration(messagesFile);
@@ -55,7 +61,7 @@ public final class MessageManager {
         countdownEnabled = messages.getBoolean("messages.broadcasts.countdown.enabled", true);
         bidBroadcastsEnabled = messages.getBoolean("messages.broadcasts.bids.enabled", true);
         
-        logger.info("Messages loaded successfully");
+        logger.info("Messages loaded successfully for language: {}", currentLanguage);
     }
 
     /**
@@ -152,4 +158,12 @@ public final class MessageManager {
     public boolean isBroadcastsEnabled() { return broadcastsEnabled; }
     public boolean isCountdownEnabled() { return countdownEnabled; }
     public boolean isBidBroadcastsEnabled() { return bidBroadcastsEnabled; }
+
+    /**
+     * Gets the current language code
+     * @return Current language code (e.g. "en-US")
+     */
+    public String getCurrentLanguage() {
+        return currentLanguage;
+    }
 } 

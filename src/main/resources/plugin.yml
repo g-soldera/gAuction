@@ -7,13 +7,18 @@ website: https://github.com/g-soldera/gAuction
 depend: [Vault]
 commands:
   auction:
-    description: Comandos de leilão
+    description: Auction commands
     aliases:
       - leilao
       - leilão
   auctionadmin:
-    description: Comandos administrativos de leilão
+    description: Auction admin commands
     permission: gauction.admin
     aliases:
       - leilaoadmin
       - leilãoadmin
+
+resources:
+  - messages_en-US.yml
+  - messages_pt-BR.yml
+  - config.yml

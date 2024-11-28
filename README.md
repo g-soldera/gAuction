@@ -78,6 +78,9 @@ auction:
     bid: 0.0 # Fee on final bid
   banned_items: [] # List of banned items
 
+# Language settings
+language: "en-US" # Available: en-US, pt-BR
+
 # Database settings
 database:
   type: SQLITE # Database type (SQLITE, MYSQL)
