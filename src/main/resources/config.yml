@@ -10,6 +10,9 @@ auction:
     bid: 0.0
   banned_items: []
 
+# Language settings
+language: "en-US" # Available: en-US, pt-BR
+
 # Database settings
 database:
   type: SQLITE

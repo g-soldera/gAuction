@@ -31,6 +31,9 @@ public class ConfigManager {
     private DatabaseType databaseType;
     private DatabaseCredentials databaseCredentials;
 
+    // Language settings
+    private String language;
+
     /**
      * Represents supported database types
      */
@@ -108,6 +111,7 @@ public class ConfigManager {
             this.config = plugin.getConfig();
             
             loadAuctionSettings();
+            loadLanguageSettings();
             loadDatabaseSettings();
             getBannedItems();
             
@@ -129,6 +133,20 @@ public class ConfigManager {
         publicationFee = config.getDouble("auction.fees.publication", 0.0);
         bidFee = config.getDouble("auction.fees.bid", 0.0);
         bannedItems = new ArrayList<>(config.getStringList("auction.banned_items"));
+    }
+
+    /**
+     * Loads language settings from config
+     */
+    private void loadLanguageSettings() {
+        language = config.getString("language", "en-US");
+        
+        // Validate language
+        if (!language.equals("en-US") && !language.equals("pt-BR")) {
+            logger.warn("Invalid language '{}' specified, defaulting to en-US", language);
+            language = "en-US";
+            config.set("language", language);
+        }
     }
 
     /**
@@ -235,6 +253,9 @@ public class ConfigManager {
     public List<String> getBannedItems() { return bannedItems; }
     public DatabaseType getDatabaseType() { return databaseType; }
     public DatabaseCredentials getDatabaseCredentials() { return databaseCredentials; }
+    public String getLanguage() {
+        return language;
+    }
 
     // Setters
     public void setAuctionDuration(int duration) { this.auctionDuration = duration; }
@@ -244,4 +265,9 @@ public class ConfigManager {
     public void setPublicationFee(double fee) { this.publicationFee = fee; }
     public void setBidFee(double fee) { this.bidFee = fee; }
     public void setBannedItems(List<String> items) { this.bannedItems = items; }
+    public void setLanguage(String language) {
+        this.language = language;
+        config.set("language", language);
+        saveConfig();
+    }
 }

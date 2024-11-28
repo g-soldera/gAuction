@@ -1,0 +1,248 @@
+# Message settings
+messages:
+  prefix: "&6[Auction]&r "
+  enabled: true
+
+  broadcasts:
+    enabled: true
+
+    auction:
+      start: "{prefix}&f{seller} started an auction for {item}"
+      half_time: "{prefix}&fHalf time remaining for {item} auction! Current bid: {bid}"
+      quarter_time: "{prefix}&fOnly a quarter time remaining for {item} auction! Current bid: {bid}"
+      tenth_time: "{prefix}&fOnly a tenth time remaining for {item} auction! Current bid: {bid}"
+      countdown:
+        enabled: true
+        ten_seconds: "{prefix}&f10 seconds remaining!"
+        three: "{prefix}&f3..."
+        two: "{prefix}&f2..."
+        one: "{prefix}&f1..."
+        end: "{prefix}&f{item} sold to {winner} for {bid}!"
+      expired: "{prefix}&fThe auction for {item} expired with no bids"
+
+    bids:
+      enabled: true
+      new_bid: "{prefix}&f{bidder} bid {bid} on {item}!"
+      outbid: "{prefix}&f{bidder} outbid {previous_bidder} with {bid}!"
+
+  admin:
+    error:
+      player_only: "{prefix}&cOnly players can use this command"
+      no_permission: "{prefix}&cYou don't have permission to use this command"
+      generic: "{prefix}&cAn error occurred while processing the command"
+    help: |
+      &a--- Auction Admin Commands ---
+      &f/auctionadmin banitem &7- Ban the item in hand
+      &f/auctionadmin banchest &7- Ban items in the chest
+      &f/auctionadmin setduration <seconds> &7- Define the duration of the auction
+      &f/auctionadmin cancelauction &7- Cancel the current auction
+      &f/auctionadmin forcestart [min bid] [increment] &7- Force start the auction
+      &f/auctionadmin reload &7- Reload configuration
+    ban_item:
+      no_item: "{prefix}&cYou need to hold an item to ban"
+      already_banned: "{prefix}&cThis item is already banned"
+      success: "{prefix}&aItem &f{item} &abanido with success"
+    ban_chest:
+      no_chest: "{prefix}&cYou need to look at a chest"
+      success: "{prefix}&a{count} items banned with success"
+    duration:
+      usage: "{prefix}&cUsage: /auctionadmin setduration <seconds>"
+      invalid_range: "{prefix}&cDuration must be between 30 and 3600 seconds"
+      invalid_number: "{prefix}&cInvalid duration value"
+      success: "{prefix}&aAuction duration set to {duration} seconds"
+    cancel:
+      no_auction: "{prefix}&cThere is no active auction at the moment"
+      success: "{prefix}&aCurrent auction canceled"
+    force_start:
+      no_item: "{prefix}&cYou need to hold an item to start the auction"
+      invalid_min_bid: "{prefix}&cInvalid minimum bid"
+      invalid_step: "{prefix}&cInvalid increment"
+      banned_item: "{prefix}&cThis item is banned from auctions"
+    reload:
+      success: "{prefix}&aConfiguration reloaded successfully"
+      error: "{prefix}&cError reloading configuration"
+    broadcasts:
+      force_start: "{prefix}&f[Admin] Auction forced by {seller}"
+
+  player:
+    enabled: true
+    auction:
+      start_success: "{prefix}&aYour auction for {item} has started!"
+      start_failed: "{prefix}&cFailed to start the auction: {reason}"
+      queue_full: "{prefix}&cThe auction queue is full. Please try again later."
+      banned_item: "{prefix}&cThis item cannot be auctioned!"
+      help: |
+        &a--- Auction Help ---
+        &f/auction &7- Open the auction menu
+        &f/auction create [min bid] [increment] &7- Create a new auction
+        &f/auction bid <value> &7- Bid on the current auction
+        &f/auction info &7- Show information about the current auction
+      auction:
+        info: |
+          &a--- Current Auction Information ---
+          &fItem: &e{item}
+          &fSeller: &e{seller}
+          &fCurrent Bid: &6{current_bid}
+          &fNext Minimum Bid: &6{min_next_bid}
+          &fTime Remaining: &e{time_remaining}
+        info_failed: "{prefix}&cThere is no active auction at the moment"
+      sold: "{prefix}&aAuction finished! The item was sold to {winner} for {bid}"
+      no_item: "{prefix}&cYou need to hold an item to create an auction"
+      invalid_min_bid: "{prefix}&cInvalid minimum bid"
+      invalid_step: "{prefix}&cInvalid increment"
+      cancelled: "{prefix}&cAuction creation canceled"
+    bids:
+      success: "{prefix}&aYou bid {bid} on {item}!"
+      failed:
+        no_auction: "{prefix}&cThere is no active auction at the moment"
+        seller: "{prefix}&cYou cannot bid on your own auction!"
+        bidder: "{prefix}&cYou already have the highest bid!"
+        balance: "{prefix}&cYou don't have enough money!"
+      outbid: "{prefix}&cYour bid was outbid! Your previous bid was refunded."
+      minimum_bid: "{prefix}&cMinimum bid is {min_bid}"
+      inventory_full: "{prefix}&cYour inventory is full!"
+
+# GUI settings
+gui:
+  main:
+    title: "&5Auction"
+    no_auction:
+      title: "&cNo Active Auctions"
+      description: "&7There are no active auctions at the moment"
+    current_auction:
+      status: "&7Active Auction"
+      min_bid: "&fMinimum Bid: &6{min_bid}"
+      current_bid: "&fCurrent Bid: &6{current_bid}"
+      seller: "&fSeller: &7{seller}"
+      time: "&fTime Remaining: &c{time}"
+    bid_button:
+      title: "&6Bid"
+      description: "&7Click to bid on the current auction"
+    warehouse_button:
+      title: "&3Warehouse"
+      description: "&7Manage your auction items"
+    history_button:
+      title: "&5History"
+      description: "&7View previous auctions"
+    quick_auction:
+      title: "&6Quick Auction"
+      description: "&7Click to auction this item"
+      prompt: "{prefix}&aEnter the initial auction value in the chat (or 'cancel' to cancel)"
+      cancelled: "{prefix}&cAuction creation canceled"
+    queue_button:
+      title: "&6Auction Queue"
+      description: "&7Click to view upcoming auctions"
+
+  confirm:
+    title: "&6Confirm Auction"
+    item:
+      min_bid: "&fMinimum Bid: &6{min_bid}"
+      step: "&fIncrement: &6{step}"
+    confirm_button:
+      title: "&aConfirm Auction"
+      description: "&7Click to start the auction"
+      min_bid: "&fMinimum Bid: &6{min_bid}"
+      step: "&fIncrement: &6{step}"
+    cancel_button:
+      title: "&cCancel"
+      description: "&7Click to cancel"
+    cancelled: "{prefix}&cAuction canceled. Item kept in inventory."
+
+  bid:
+    title: "&6Bid"
+    no_auction:
+      title: "&cNo Active Auctions"
+      description: "&7There are no active auctions at the moment"
+    step_button:
+      title: "&6Quick Bid: {amount}"
+      description: "&7Click to bid the next ({amount})"
+    custom_button:
+      title: "&6Custom Bid"
+      description: "&7Minimum bid: {min_bid}"
+    custom:
+      prompt: "{prefix}&aEnter the value of your bid in the chat"
+      min_bid: "{prefix}&7Minimum bid: {min_bid}"
+      cancelled: "{prefix}&cBid canceled"
+      invalid_amount: "{prefix}&cInvalid value! Enter a valid number."
+    messages:
+      success: "{prefix}&aBid of {bid} made successfully!"
+      failed: "{prefix}&cFailed to make bid: {reason}"
+      minimum_bid: "{prefix}&cMinimum bid is {min_bid}"
+      inventory_full: "{prefix}&cYour inventory is full!"
+      no_money: "{prefix}&cYou don't have enough money!"
+      own_auction: "{prefix}&cYou cannot bid on your own auction!"
+      auction_ended: "{prefix}&cThis auction has already ended!"
+
+  warehouse:
+    title: "&3Auction Warehouse"
+    empty:
+      title: "&cNo Items Available"
+      description: "&7You don't have items to collect"
+    item:
+      seller: "&fSeller: &7{seller}"
+      buyer: "&fBuyer: &7{buyer}"
+      final_bid: "&fFinal Bid: &6{final_bid}"
+      date: "&fDate: &7{date}"
+      status: "&fStatus: {status_color}{status}"
+      collect: "&aClick to collect this item"
+    buttons:
+      back:
+        title: "&cBack to Main Menu"
+        description: "&7Click to return to the main menu"
+      collect_all:
+        title: "&aMass Collect"
+        description: "&7Click to collect all items"
+    messages:
+      collected: "{prefix}&aItem collected successfully!"
+      items_collected: "{prefix}&a{count} items collected successfully!"
+      inventory_full: "{prefix}&cYour inventory is full!"
+      error: "{prefix}&cAn error occurred while collecting the item. Contact an administrator."
+      changes_saved: "{prefix}&aChanges saved successfully"
+      save_error: "{prefix}&cError saving changes"
+
+  history:
+    title: "&5Auction History"
+    empty:
+      title: "&cNo History"
+      description: "&7You don't have auction history"
+    item:
+      seller: "&7Seller: &f{seller}"
+      buyer: "&7Buyer: &f{buyer}"
+      final_bid: "&7Final Bid: &6{final_bid}"
+      date: "&7Date: &f{date}"
+      status: "&7Status: {status_color}{status}"
+    buttons:
+      previous_page: "&aPrevious Page"
+      next_page: "&aNext Page"
+      back:
+        title: "&cBack to Main Menu"
+        description: "&7Click to return to the main menu"
+      filter:
+        all:
+          title: "&eAll Auctions"
+          description: "&7Click to view only your auctions"
+        personal:
+          title: "&eMy Auctions"
+          description: "&7Click to view all auctions"
+
+  queue:
+    title: "&6Auction Queue"
+    empty:
+      title: "&cNo Auctions in Queue"
+      description: "&7There are no auctions waiting"
+    item:
+      seller: "&fSeller: &7{seller}"
+      min_bid: "&fInitial Bid: &6{min_bid}"
+      step: "&fIncrement: &6{step}"
+      admin_remove: "&cRight-click to remove this auction"
+    messages:
+      removed: "{prefix}&cItem removed from queue"
+      current_cancelled: "{prefix}&cCurrent auction canceled"
+      queue_cleared: "{prefix}&cAll items in the queue have been canceled"
+    buttons:
+      back:
+        title: "&cBack to Main Menu"
+        description: "&7Click to return to the main menu"
+      clear:
+        title: "&cClear Queue"
+        description: "&7Click to cancel all auctions"

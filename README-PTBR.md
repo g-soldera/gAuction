@@ -78,6 +78,9 @@ auction:
     bid: 0.0 # Taxa sobre o lance final
   banned_items: [] # Lista de itens banidos
 
+# Language settings
+language: "en-US" # Disponível: en-US, pt-BR
+
 # Database settings
 database:
   type: SQLITE # Tipo de banco de dados (SQLITE, MYSQL)
