@@ -8,9 +8,12 @@ depend: [Vault]
 commands:
   auction:
     description: Auction commands
+    permission: gauction.use
+    permission_create: gauction.create
     aliases:
       - leilao
       - leilão
+      
   auctionadmin:
     description: Auction admin commands
     permission: gauction.admin
