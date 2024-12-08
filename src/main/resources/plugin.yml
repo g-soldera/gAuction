@@ -1,5 +1,5 @@
 name: GAuction
-version: 2.0
+version: 2.10
 main: com.gsoldera.gAuction.GAuctionPlugin
 description: Auction plugin for Minecraft
 author: GSoldera
