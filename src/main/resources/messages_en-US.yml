@@ -91,6 +91,8 @@ messages:
       invalid_min_bid: "{prefix}&cInvalid minimum bid"
       invalid_step: "{prefix}&cInvalid increment"
       cancelled: "{prefix}&cAuction creation canceled"
+      max_items: "{prefix}&cYou can only have {max} items in the auction queue at once"
+      cooldown: "{prefix}&cYou must wait {time} seconds before creating another auction"
     bids:
       success: "{prefix}&aYou bid {bid} on {item}!"
       failed:

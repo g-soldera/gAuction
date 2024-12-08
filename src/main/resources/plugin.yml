@@ -9,7 +9,6 @@ commands:
   auction:
     description: Auction commands
     permission: gauction.use
-    permission_create: gauction.create
     aliases:
       - leilao
       - leilão
@@ -20,6 +19,23 @@ commands:
     aliases:
       - leilaoadmin
       - leilãoadmin
+
+permissions:
+  gauction.use:
+    description: Allows using basic auction commands
+    default: true
+  gauction.create:
+    description: Allows creating auctions
+    default: op
+  gauction.admin:
+    description: Allows using admin commands
+    default: op
+  gauction.ignorelimit:
+    description: Ignores the per-player queue limit
+    default: op
+  gauction.ignorecooldown:
+    description: Ignores the auction creation cooldown
+    default: op
 
 resources:
   - messages_en-US.yml

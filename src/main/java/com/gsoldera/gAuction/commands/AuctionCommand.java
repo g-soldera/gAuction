@@ -64,13 +64,13 @@ public final class AuctionCommand implements CommandExecutor {
      * Handles auction creation command
      */
     private boolean handleCreateAuction(Player player, String[] args) {
-        ItemStack itemToAuction = player.getInventory().getItemInMainHand();
-
         if (!player.hasPermission("gauction.create")) {
             Map<String, String> placeholders = new HashMap<>();
             messageManager.sendMessage(player, "messages.admin.error.no_permission", placeholders);
             return true;
         }
+
+        ItemStack itemToAuction = player.getInventory().getItemInMainHand();
         
         if (itemToAuction.getType() == Material.AIR) {
             Map<String, String> placeholders = new HashMap<>();

@@ -2,6 +2,10 @@
 auction:
   duration: 300
   max_queue_size: 10
+  max_items_per_player: 3
+  cooldown:
+    enabled: true
+    seconds: 60
   step:
     enabled: true
     percentage: 10.0

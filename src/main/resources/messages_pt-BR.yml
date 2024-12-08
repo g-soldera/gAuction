@@ -91,6 +91,8 @@ messages:
       invalid_min_bid: "{prefix}&cValor mínimo inválido"
       invalid_step: "{prefix}&cValor de incremento inválido"
       cancelled: "{prefix}&cCriação do leilão cancelada"
+      max_items: "{prefix}&cVocê só pode ter {max} itens na fila de leilões por vez"
+      cooldown: "{prefix}&cVocê deve esperar {time} segundos antes de criar outro leilão"
     bids:
       success: "{prefix}&aVocê deu um lance de {bid} em {item}!"
       failed:

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -58,7 +59,8 @@ public final class AuctionManager {
     private final int maxQueueSize;
     private final double publicationFee;
     private final double bidFee;
-
+    private final Map<UUID, Long> lastAuctionTime;
+    
     public AuctionManager(GAuctionPlugin plugin) {
         this.plugin = plugin;
         this.logger = plugin.getPluginLogger();
@@ -96,6 +98,15 @@ public final class AuctionManager {
             }),
             60, 60, TimeUnit.SECONDS
         );
+
+        this.lastAuctionTime = new ConcurrentHashMap<>();
+        
+        // Add cleanup task for cooldown map
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+            long now = System.currentTimeMillis();
+            lastAuctionTime.entrySet().removeIf(entry -> 
+                now - entry.getValue() > configManager.getAuctionCooldown() * 1000L);
+        }, 20L * 60, 20L * 60); // Run every minute
     }
 
     private void broadcastTimeCheckpoint(TimeCheckpoint checkpoint) {
@@ -604,6 +615,20 @@ public final class AuctionManager {
         try {
             auctionLock.lock();
 
+            if (!canCreateAuction(seller)) {
+                Map<String, String> placeholders = new HashMap<>();
+                placeholders.put("max", String.valueOf(configManager.getMaxItemsPerPlayer()));
+                messageManager.sendMessage(seller, "messages.player.auction.max_items", placeholders);
+                return false;
+            }
+
+            if (isOnCooldown(seller)) {
+                Map<String, String> placeholders = new HashMap<>();
+                placeholders.put("time", String.valueOf(getRemainingCooldown(seller)));
+                messageManager.sendMessage(seller, "messages.player.auction.cooldown", placeholders);
+                return false;
+            }
+
             if (ItemSerializer.isItemBanned(item)) {
                 Map<String, String> placeholders = new HashMap<>();
                 messageManager.sendMessage(seller, "messages.player.auction.banned_item", placeholders);
@@ -627,6 +652,7 @@ public final class AuctionManager {
                 configManager.getAuctionDuration() * 1000L);
             
             if (auctionQueue.offer(auction)) {
+                lastAuctionTime.put(seller.getUniqueId(), System.currentTimeMillis());
                 try {
                     saveAuctionToDatabase(auction);
 
@@ -814,5 +840,49 @@ public final class AuctionManager {
         } finally {
             auctionLock.unlock();
         }
+    }
+
+    public boolean canCreateAuction(Player player) {
+        if (player.hasPermission("gauction.ignorelimit")) {
+            return true;
+        }
+
+        int playerItems = 0;
+        if (currentAuction != null && currentAuction.getSellerUUID().equals(player.getUniqueId())) {
+            playerItems++;
+        }
+        
+        for (AuctionItem auction : auctionQueue) {
+            if (auction.getSellerUUID().equals(player.getUniqueId())) {
+                playerItems++;
+            }
+        }
+
+        return playerItems < configManager.getMaxItemsPerPlayer();
+    }
+
+    public boolean isOnCooldown(Player player) {
+        if (player.hasPermission("gauction.ignorecooldown")) {
+            return false;
+        }
+
+        Long lastTime = lastAuctionTime.get(player.getUniqueId());
+        if (lastTime == null) {
+            return false;
+        }
+
+        long cooldownMillis = configManager.getAuctionCooldown() * 1000L;
+        return System.currentTimeMillis() - lastTime < cooldownMillis;
+    }
+
+    public long getRemainingCooldown(Player player) {
+        Long lastTime = lastAuctionTime.get(player.getUniqueId());
+        if (lastTime == null) {
+            return 0;
+        }
+
+        long cooldownMillis = configManager.getAuctionCooldown() * 1000L;
+        long remaining = cooldownMillis - (System.currentTimeMillis() - lastTime);
+        return Math.max(0, remaining / 1000);
     }
 }
