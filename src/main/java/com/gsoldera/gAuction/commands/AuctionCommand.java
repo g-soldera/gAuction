@@ -35,8 +35,15 @@ public final class AuctionCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+
         if (!(sender instanceof Player player)) {
             messageManager.sendRawMessage(sender, "&cThis command can only be used by players");
+            return true;
+        }
+
+        if (!player.hasPermission("gauction.use")) {
+            Map<String, String> placeholders = new HashMap<>();
+            messageManager.sendMessage(player, "messages.admin.error.no_permission", placeholders);
             return true;
         }
 
@@ -57,6 +64,12 @@ public final class AuctionCommand implements CommandExecutor {
      * Handles auction creation command
      */
     private boolean handleCreateAuction(Player player, String[] args) {
+        if (!player.hasPermission("gauction.create")) {
+            Map<String, String> placeholders = new HashMap<>();
+            messageManager.sendMessage(player, "messages.admin.error.no_permission", placeholders);
+            return true;
+        }
+
         ItemStack itemToAuction = player.getInventory().getItemInMainHand();
         
         if (itemToAuction.getType() == Material.AIR) {

@@ -34,6 +34,9 @@ public class ConfigManager {
     // Language settings
     private String language;
 
+    private int maxItemsPerPlayer;
+    private int auctionCooldown;
+
     /**
      * Represents supported database types
      */
@@ -114,6 +117,9 @@ public class ConfigManager {
             loadLanguageSettings();
             loadDatabaseSettings();
             getBannedItems();
+            
+            maxItemsPerPlayer = config.getInt("auction.max_items_per_player", 3);
+            auctionCooldown = config.getInt("auction.cooldown.seconds", 60);
             
             logger.info("Configuration loaded successfully");
         } catch (Exception e) {
@@ -256,6 +262,8 @@ public class ConfigManager {
     public String getLanguage() {
         return language;
     }
+    public int getMaxItemsPerPlayer() { return maxItemsPerPlayer; }
+    public int getAuctionCooldown() { return auctionCooldown; }
 
     // Setters
     public void setAuctionDuration(int duration) { this.auctionDuration = duration; }

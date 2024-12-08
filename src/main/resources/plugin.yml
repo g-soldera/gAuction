@@ -1,5 +1,5 @@
 name: GAuction
-version: 2.0
+version: 2.10
 main: com.gsoldera.gAuction.GAuctionPlugin
 description: Auction plugin for Minecraft
 author: GSoldera
@@ -8,15 +8,34 @@ depend: [Vault]
 commands:
   auction:
     description: Auction commands
+    permission: gauction.use
     aliases:
       - leilao
       - leilão
+      
   auctionadmin:
     description: Auction admin commands
     permission: gauction.admin
     aliases:
       - leilaoadmin
       - leilãoadmin
+
+permissions:
+  gauction.use:
+    description: Allows using basic auction commands
+    default: true
+  gauction.create:
+    description: Allows creating auctions
+    default: op
+  gauction.admin:
+    description: Allows using admin commands
+    default: op
+  gauction.ignorelimit:
+    description: Ignores the per-player queue limit
+    default: op
+  gauction.ignorecooldown:
+    description: Ignores the auction creation cooldown
+    default: op
 
 resources:
   - messages_en-US.yml
